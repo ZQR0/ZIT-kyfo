@@ -1,0 +1,28 @@
+networks:
+  kyfo-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+services:
+  postgres:
+    image: postgres:18.0-alpine
+    container_name: zit-postgres
+    networks:
+      - kyfo-network
+    restart: on-failure
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kyfo_db
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U postgres -d kyfo_db' ]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
