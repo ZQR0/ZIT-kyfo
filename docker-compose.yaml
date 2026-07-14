@@ -4,10 +4,12 @@ networks:
 
 volumes:
   postgres_data:
+  prometheus_data:
+  grafana_data:
 
 services:
   postgres:
-    image: postgres:18.0-alpine
+    image: postgres:18-alpine
     container_name: zit-postgres
     networks:
       - kyfo-network
@@ -26,3 +28,33 @@ services:
       timeout: 5s
       start_period: 10s
       retries: 5
+  prometheus:
+    image: prom/prometheus:v3.5.1
+    container_name: zit-prometheus
+    restart: on-failure
+    networks:
+      - kyfo-network
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--storage.tsdb.path=/prometheus"
+  grafana:
+    image: grafana/grafana:12.3-ubuntu
+    container_name: zit-grafana
+    restart: unless-stopped
+    networks:
+      - kyfo-network
+    ports:
+      - "3030:3030"
+    depends_on:
+      prometheus:
+        condition: service_started
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
