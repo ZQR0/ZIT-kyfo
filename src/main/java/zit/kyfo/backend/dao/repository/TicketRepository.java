@@ -10,9 +10,11 @@ public interface TicketRepository extends JpaRepository<TicketEntity, Integer> {
 
     Optional<TicketEntity> findByTicketNumber(String ticketNumber);
 
-    List<TicketEntity> findByPassengerId(Integer passengerId);
+    List<TicketEntity> findByPassengerId(int passengerId);
 
-    List<TicketEntity> findByFlightId(Integer flightId);
+    List<TicketEntity> findByFlightId(int flightId);
 
-    Optional<TicketEntity> findByFlightIdAndSeat(Integer flightId, String seat);
+    Optional<TicketEntity> findByFlightIdAndSeat(int flightId, String seat);
+
+    List<TicketEntity> findByFlightAirlineId(int airlineId);
 }

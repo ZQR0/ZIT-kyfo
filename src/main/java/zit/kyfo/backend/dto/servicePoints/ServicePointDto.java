@@ -8,10 +8,9 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServicePointDto {
-
     private Integer id;
     private String name;
     private String airportCode;
     private String contactPhone;
-    private Boolean isActive;
+    private Boolean active;
 }

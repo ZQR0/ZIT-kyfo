@@ -34,7 +34,7 @@ public class TransactionEntity extends AbstractEntity<Integer> implements Serial
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public enum Type {topup, purchase}
+    public enum Type {topUp, purchase}
 
     public TransactionEntity(BigDecimal amount, LocalDateTime createdAt, ServicePointEntity servicePoint, TicketEntity ticket, Type type) {
         setAmount(amount);
