@@ -1,5 +1,8 @@
 package zit.kyfo.backend.dao.entity;
 
+//Теперь будет использоваться для сущностей вместо
+// * {@link BaseEntity} и {@link Entity}
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import java.io.Serializable;
@@ -13,7 +16,7 @@ public abstract class AbstractEntity<ID extends Serializable> {
     @Column(name = "id")
     protected ID id;
 
-    public void setId(ID id) {
+    protected void setId(ID id) {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
