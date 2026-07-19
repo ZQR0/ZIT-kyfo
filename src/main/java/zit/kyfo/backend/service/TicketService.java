@@ -7,6 +7,7 @@ import zit.kyfo.backend.dao.entity.AirlinesEntity;
 import zit.kyfo.backend.dao.entity.FlightEntity;
 import zit.kyfo.backend.dao.entity.TicketEntity;
 import zit.kyfo.backend.dao.repository.TicketRepository;
+import zit.kyfo.backend.dto.flights.FlightDto;
 import zit.kyfo.backend.dto.other.PaymentResponseDto;
 import zit.kyfo.backend.dto.other.RestoreDto;
 import zit.kyfo.backend.dto.other.TopUpProcessDto;
@@ -26,6 +27,19 @@ public class TicketService {
     private final FlightsService flightsService;
     private final TransactionService transactionService;
 
+    public List<TicketDto> findAll() {
+        List<TicketEntity> ticketEntities = ticketRepository.findAll();
+        return ticketEntities.stream()
+                .map(this::mapToTicketDto)
+                .collect(Collectors.toList());
+    }
+
+    public BigDecimal checkBalance(String ticketNumber) {
+        TicketEntity entity = ticketRepository.findByTicketNumber(ticketNumber)
+                .orElseThrow(() -> new RuntimeException("Билет с номером " + ticketNumber + " не найден"));
+        return entity.getBalance();
+    }
+
     public TicketDto findById(int id) {
         TicketEntity entity = ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Билет с id " + id + " не найден"));
@@ -38,7 +52,7 @@ public class TicketService {
         return mapToTicketDto(entity);
     }
 
-    private List<TicketDto> getTicketsByFlightId(int flightId) {
+    public List<TicketDto> getTicketsByFlightId(int flightId) {
         FlightEntity flightEntity = flightsService.findEntityById(flightId);
 
         List<TicketEntity> tickets = ticketRepository.findByFlightId(flightEntity.getId());
@@ -135,7 +149,7 @@ public class TicketService {
 
         RestoreDto response = new RestoreDto();
         response.setSuccess(true);
-        response.setMessage("Начисления откачены для " + restoredCount + " талонов");
+        response.setMessage("Начисления отменены для " + restoredCount + " талонов");
         response.setTicketsRestored(restoredCount);
 
         return response;

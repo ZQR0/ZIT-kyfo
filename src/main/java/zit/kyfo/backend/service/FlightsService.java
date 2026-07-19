@@ -1,6 +1,7 @@
 package zit.kyfo.backend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.mapper.Mapper;
 import org.springframework.stereotype.Service;
 import zit.kyfo.backend.dao.entity.AirlinesEntity;
 import zit.kyfo.backend.dao.entity.FlightEntity;
@@ -17,6 +18,13 @@ public class FlightsService {
     private final AirlinesService airlinesService;
 
     private final FlightRepository flightRepository;
+
+    public List<FlightDto> findAll() {
+        List<FlightEntity> flightEntities = flightRepository.findAll();
+        return flightEntities.stream()
+                .map(this::mapToFlightDto)
+                .collect(Collectors.toList());
+    }
 
     public FlightDto findById(int id) {
         FlightEntity entity = flightRepository.findById(id)
