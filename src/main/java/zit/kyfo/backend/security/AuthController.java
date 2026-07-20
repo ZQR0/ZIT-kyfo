@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +29,7 @@ import zit.kyfo.backend.dto.LoginResponse;
 
 import java.util.Map;
 
+@Slf4j
 @Tag(name = "Security", description = "API для авторизации и аутентификации")
 @RestController
 @RequestMapping("/api/v1/airlines")
@@ -60,6 +62,7 @@ public class AuthController {
             AirlinesEntity airline = airlinesRepository.findByLogin(request.login())
                     .orElseThrow(() -> new BadCredentialsException("Invalid login or password"));
 
+            log.info("Auth controller did his work");
             return ResponseEntity.ok(new LoginResponse(
                     airline.getId(), airline.getName(), airline.getLogin(), true));
         } catch (BadCredentialsException e) {
