@@ -1,0 +1,76 @@
+networks:
+  kyfo-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: zit-postgres
+    networks:
+      - kyfo-network
+    restart: on-failure
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kyfo_db
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U postgres -d kyfo_db' ]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+  prometheus:
+    image: prom/prometheus:v3.5.1
+    container_name: zit-prometheus
+    restart: on-failure
+    networks:
+      - kyfo-network
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--storage.tsdb.path=/prometheus"
+  grafana:
+    image: grafana/grafana:12.3-ubuntu
+    container_name: zit-grafana
+    restart: unless-stopped
+    networks:
+      - kyfo-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      prometheus:
+        condition: service_started
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+  app:
+    image: zit-kyfo-app
+    container_name: zit-app
+    restart: on-failure
+    networks:
+      - kyfo-network
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/kyfo_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_PROFILES_ACTIVE: docker
