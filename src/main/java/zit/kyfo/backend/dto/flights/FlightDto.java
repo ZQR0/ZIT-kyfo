@@ -20,4 +20,5 @@ public class FlightDto {
     private ZonedDateTime timeIn;
     private Integer delayMinutes;
     private String reasonDelay;
+    private boolean delayed;
 }

@@ -41,11 +41,13 @@ public class AirlinesController {
     private final TicketService ticketService;
     private final ServicePointService servicePointService;
 
-    @Operation(summary = "Список рейсов", description = "Возвращает список всех рейсов")
+    @Operation(summary = "Список рейсов", description = "Возвращает список рейсов. Задержанные (от 2 ч) — в начале. Параметр delayedOnly=true — только задержанные.")
     @ApiResponse(responseCode = "200", description = "Рейсы успешно получены")
     @GetMapping("/flights")
-    public ResponseEntity<List<FlightDto>> getFlights() {
-        return ResponseEntity.ok(flightsService.findAll());
+    public ResponseEntity<List<FlightDto>> getFlights(
+            @Parameter(description = "Только рейсы с задержкой от 2 часов")
+            @RequestParam(value = "delayedOnly", defaultValue = "false") boolean delayedOnly) {
+        return ResponseEntity.ok(flightsService.findAll(delayedOnly));
     }
     //
 

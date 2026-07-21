@@ -74,6 +74,12 @@ dependencies {
     liquibaseRuntime 'info.picocli:picocli:4.7.7'
 }
 
+tasks.named('processResources') {
+    from('src/frontend') {
+        into 'static'
+    }
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

@@ -75,6 +75,10 @@ public class TicketService {
     public TopUpProcessDto processTopUp(int flightId, BigDecimal amount, int servicePointId) {
         FlightEntity flightEntity = flightsService.findEntityById(flightId);
 
+        if (!FlightDelayPolicy.isDelayed(flightEntity.getDelayMinutes())) {
+            throw new RuntimeException("Компенсация доступна только для рейсов с задержкой от 2 часов");
+        }
+
         List<TicketEntity> tickets = ticketRepository.findByFlightId(flightId);
 
         if (tickets.isEmpty()) {

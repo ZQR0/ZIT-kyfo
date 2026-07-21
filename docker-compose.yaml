@@ -1,3 +1,5 @@
+name: kyfo
+
 networks:
   kyfo-network:
     driver: bridge

@@ -50,4 +50,6 @@ public interface FlightRepository extends JpaRepository<FlightEntity, Integer> {
             ORDER BY COUNT(f) DESC
             """)
     List<DelayReasonDto> mostCommonDelayReasons();
+
+    List<FlightEntity> findByDelayMinutesGreaterThanEqualOrderByDelayMinutesDesc(int delayMinutes);
 }

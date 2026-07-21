@@ -47,6 +47,19 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    @Order(1)
+    public SecurityFilterChain staticFilterChain(HttpSecurity security) throws Exception {
+        return security
+                .securityMatcher("/", "/index.html", "/css/**", "/js/**", "/favicon.ico")
+                .authorizeHttpRequests(authz -> authz.anyRequest().permitAll())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractAuthenticationFilterConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .logout(LogoutConfigurer::disable)
+                .build();
+    }
+
+    @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity security,
                                              RestAuthenticationEntryPoint entryPoint) throws Exception {
         return security
