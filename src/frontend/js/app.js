@@ -23,6 +23,10 @@ const SERVICE_POINTS = [
     { id: 20, name: 'Кафе «Ночной рейс»', active: true },
 ];
 
+ACCRUAL_POINTS = [
+    {id: 1, name: 'Системное начисление', active: true},
+]
+
 function fillServicePointSelect(selectId, activeOnly = true) {
     const select = document.getElementById(selectId);
     if (!select) return;
@@ -31,6 +35,16 @@ function fillServicePointSelect(selectId, activeOnly = true) {
     select.innerHTML = points.map(p =>
         `<option value="${p.id}">${p.name} (${p.id})</option>`
     ).join('');
+}
+
+function fillServicePointAccrualSelect(selectId, activeOnly = true) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    const points = activeOnly ? ACCRUAL_POINTS.filter(p => p.active) : ACCRUAL_POINTS;
+    select.innerHTML = points.map(p =>
+    `<option value="${p.id}">${p.name}</option>`
+    ).join('')
 }
 
 function formatShortDate(iso) {
@@ -91,7 +105,7 @@ function renderFlightsTable(flights) {
 }
 
 fillServicePointSelect('pay-point-id');
-fillServicePointSelect('topup-point-id');
+fillServicePointAccrualSelect('topup-point-id');
 
 function showToast(message, isError = false) {
     const toast = document.getElementById('toast');
